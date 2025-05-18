@@ -1,0 +1,16 @@
+SISTEMA DE CADASTRO DE CLIENTES E CONTATOS
+
+REQUISITOS FUNCIONAIS:
+1. Cadastrar novos clientes (nome, email, telefone, endereço)
+2. Listar todos os clientes cadastrados
+3. Editar informações de clientes existentes
+4. Excluir clientes do sistema
+5. Cadastrar múltiplos contatos para cada cliente
+6. Listar contatos de um cliente específico
+7. Buscar clientes por nome ou email
+
+REQUISITOS NÃO FUNCIONAIS:
+1. Sistema desenvolvido em Python
+2. Armazenamento inicial em listas/dicionários (será migrado para banco de dados na próxima etapa)
+3. Interface via linha de comando (CLI)
+4. Código organizado em funções 

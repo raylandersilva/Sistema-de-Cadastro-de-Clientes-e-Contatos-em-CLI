@@ -1,0 +1,20 @@
+MODELO LÓGICO DO SISTEMA DE CADASTRO DE CLIENTES E CONTATOS
+
+Tabela CLIENTE:
+- id_cliente (PK, inteiro, autoincremento)
+- nome (texto, não nulo)
+- email (texto, único)
+- telefone (texto)
+- endereço (texto)
+
+Tabela CONTATO:
+- id_contato (PK, inteiro, autoincremento)
+- id_cliente (FK para CLIENTE, não nulo)
+- nome (texto, não nulo)
+- telefone (texto)
+- email (texto)
+- tipo (texto - ex: "pessoal", "comercial")
+
+Relacionamentos:
+- Um CLIENTE pode ter vários CONTATOS (1:N)
+- Cada CONTATO pertence a um único CLIENTE 
