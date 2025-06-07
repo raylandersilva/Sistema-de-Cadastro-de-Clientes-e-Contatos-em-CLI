@@ -16,26 +16,85 @@ Este é um sistema simples de cadastro de clientes e contatos desenvolvido em Py
 
 ```
 Projeto_Integrador/
-├── Documentacao/
-│   ├── Requisitos.txt         # Requisitos funcionais e não funcionais
-│   ├── Modelo_Logico.txt     # Modelo lógico do banco de dados
-│   └── Script_SQL.sql        # Script para criação do banco de dados
 ├── Codigo/
-│   └── sistema_clientes.py   # Implementação do sistema
-└── README.md                 # Este arquivo
+│   ├── sistema_clientes.py       # Implementação do sistema (CLI)
+│   ├── sistema_clientes_gui.py   # Implementação da interface gráfica (GUI)
+│   ├── db_config.py              # Configurações de conexão com o MySQL
+│   └── verificar_banco.py        # Script para testar o banco de dados
+├── Documentacao/
+│   ├── Requisitos.txt            # Requisitos funcionais e não funcionais
+│   ├── Modelo_Logico.txt         # Modelo lógico do banco de dados
+│   └── Script_SQL.sql            # Script para criação do banco de dados
+├── .gitignore                    # Arquivo para ignorar arquivos no Git
+├── requirements.txt              # Dependências do projeto
+└── README.md                     # Este arquivo
 ```
 
 ## Como Executar
 
-1. Certifique-se de ter o Python 3.6 ou superior instalado
-2. Navegue até a pasta do projeto:
+### Pré-requisitos
+
+1. **Python 3.6 ou superior** instalado.
+2. **MySQL** configurado (pode ser via XAMPP ou outro servidor MySQL).
+3. **HeidiSQL** ou outra ferramenta para gerenciar o banco de dados.
+
+### Instalação das Dependências
+
+Instale as dependências do projeto usando o arquivo `requirements.txt`:
+
+```powershell
+pip install -r requirements.txt
+```
+
+### Configuração do Banco de Dados
+
+1. Execute o script SQL (`Script_SQL.sql`) no MySQL para criar o banco de dados e as tabelas.
+2. Configure as credenciais de conexão no arquivo `db_config.py`.
+
+### Executando o Sistema
+
+#### Versão CLI (Linha de Comando)
+
+1. Navegue até a pasta `Codigo`:
+   ```powershell
+   cd Codigo
    ```
-   cd Projeto_Integrador/Codigo
-   ```
-3. Execute o sistema:
-   ```
+2. Execute o sistema:
+   ```powershell
    python sistema_clientes.py
    ```
+
+#### Versão GUI (Interface Gráfica)
+
+1. Navegue até a pasta `Codigo`:
+   ```powershell
+   cd Codigo
+   ```
+2. Execute a interface gráfica:
+   ```powershell
+   python sistema_clientes_gui.py
+   ```
+
+## Dependências
+
+As principais dependências do projeto são:
+
+- `mysql-connector-python==8.0.32`: Biblioteca para conexão com o MySQL.
+- `python-dotenv==1.0.0`: Biblioteca para gerenciar variáveis de ambiente (opcional, se usado).
+
+## Próximas Etapas
+
+- Melhorias na interface gráfica (GUI).
+- Adição de relatórios e exportação de dados.
+- Implementação de autenticação de usuários.
+
+## Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
+
+## Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).
 
 ## Utilização
 
