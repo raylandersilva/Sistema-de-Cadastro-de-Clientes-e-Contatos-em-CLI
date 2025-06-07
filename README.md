@@ -122,4 +122,14 @@ Escolha a opção desejada digitando o número correspondente e siga as instruç
 - Implementação do banco de dados MySQL
 - Migração dos dados para persistência em banco
 - Adição de novas funcionalidades
-- Melhorias na interface do usuário 
+- Melhorias na interface do usuário
+
+## Demonstração em Vídeo
+
+Assista ao vídeo demonstrando as principais funcionalidades do sistema:  
+[![Vídeo de Demonstração](https://img.youtube.com/vi/zIiqy-UvIvs/0.jpg)](https://youtu.be/zIiqy-UvIvs)
+
+## Autoria
+
+Este projeto foi desenvolvido por **Raylander**.  
+Para mais informações, entre em contato: [raylander56@hotmail.com](mailto:raylander56@hotmail.com). 
