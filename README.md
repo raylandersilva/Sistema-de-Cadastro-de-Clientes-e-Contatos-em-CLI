@@ -1,16 +1,16 @@
 # Sistema de Cadastro de Clientes e Contatos
 
-Este é um sistema simples de cadastro de clientes e contatos desenvolvido em Python. O sistema permite gerenciar informações de clientes e seus contatos associados através de uma interface de linha de comando (CLI).
+Este é um sistema simples de cadastro de clientes e contatos desenvolvido em Python. O sistema permite gerenciar informações de clientes e seus contatos associados, inicialmente com armazenamento em memória e posteriormente migrado para um banco de dados MySQL.
 
 ## Funcionalidades
 
-- Cadastro de clientes (nome, email, telefone, endereço)
-- Listagem de todos os clientes
-- Edição de informações de clientes
-- Exclusão de clientes
-- Cadastro de múltiplos contatos para cada cliente
-- Listagem de contatos por cliente
-- Busca de clientes por nome ou email
+- **Cadastro de Clientes**: Adicionar novos clientes com nome, email, telefone e endereço.
+- **Listagem de Clientes**: Listar todos os clientes cadastrados.
+- **Edição de Clientes**: Atualizar informações de clientes existentes.
+- **Exclusão de Clientes**: Remover clientes do sistema.
+- **Cadastro de Contatos**: Adicionar múltiplos contatos para cada cliente.
+- **Listagem de Contatos**: Listar contatos associados a um cliente.
+- **Busca de Clientes**: Buscar clientes por nome ou email.
 
 ## Estrutura do Projeto
 

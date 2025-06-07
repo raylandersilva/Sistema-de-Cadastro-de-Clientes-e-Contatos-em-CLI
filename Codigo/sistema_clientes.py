@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 
 """
-Sistema de Cadastro de Clientes e Contatos - Versão Inicial
-Este módulo implementa um sistema simples de cadastro de clientes e seus contatos,
-utilizando estruturas de dados em memória (listas e dicionários).
+Sistema de Cadastro de Clientes e Contatos - Versão MySQL
+Este módulo implementa um sistema de cadastro de clientes e seus contatos,
+utilizando MySQL como banco de dados.
 """
 
-# Estruturas de dados temporárias (serão substituídas pelo banco de dados)
-clientes = []
-contatos = []
+from db_config import get_db_connection
+from mysql.connector import Error
 
 def menu_principal():
     """Exibe o menu principal e retorna a opção escolhida pelo usuário."""
@@ -37,49 +36,72 @@ def cadastrar_cliente():
         print("O email é obrigatório!")
         email = input("Email: ").strip()
     
-    # Verificar se o email já existe
-    if any(c["email"] == email for c in clientes):
-        print("Este email já está cadastrado!")
-        return
-    
     telefone = input("Telefone: ").strip()
     endereco = input("Endereço: ").strip()
     
-    cliente = {
-        "id": len(clientes) + 1,
-        "nome": nome,
-        "email": email,
-        "telefone": telefone,
-        "endereco": endereco
-    }
+    conn = get_db_connection()
+    if not conn:
+        return
     
-    clientes.append(cliente)
-    print("\nCliente cadastrado com sucesso!")
+    try:
+        cursor = conn.cursor()
+        sql = """INSERT INTO cliente (nome, email, telefone, endereco) 
+                 VALUES (%s, %s, %s, %s)"""
+        cursor.execute(sql, (nome, email, telefone, endereco))
+        conn.commit()
+        print("\nCliente cadastrado com sucesso!")
+    except Error as e:
+        if "Duplicate entry" in str(e):
+            print("Este email já está cadastrado!")
+        else:
+            print(f"Erro ao cadastrar cliente: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def listar_clientes():
     """Lista todos os clientes cadastrados."""
-    print("\n=== LISTA DE CLIENTES ===")
-    if not clientes:
-        print("Nenhum cliente cadastrado.")
+    conn = get_db_connection()
+    if not conn:
         return
     
-    for cliente in clientes:
-        print(f"\nID: {cliente['id']}")
-        print(f"Nome: {cliente['nome']}")
-        print(f"Email: {cliente['email']}")
-        print(f"Telefone: {cliente['telefone']}")
-        print(f"Endereço: {cliente['endereco']}")
-        print("-" * 40)
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM cliente")
+        clientes = cursor.fetchall()
+        
+        print("\n=== LISTA DE CLIENTES ===")
+        if not clientes:
+            print("Nenhum cliente cadastrado.")
+            return
+        
+        for cliente in clientes:
+            print(f"\nID: {cliente['id_cliente']}")
+            print(f"Nome: {cliente['nome']}")
+            print(f"Email: {cliente['email']}")
+            print(f"Telefone: {cliente['telefone']}")
+            print(f"Endereço: {cliente['endereco']}")
+            print("-" * 40)
+    except Error as e:
+        print(f"Erro ao listar clientes: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def editar_cliente():
     """Edita as informações de um cliente existente."""
     listar_clientes()
-    if not clientes:
+    
+    conn = get_db_connection()
+    if not conn:
         return
     
     try:
         id_cliente = int(input("\nID do cliente a editar: "))
-        cliente = next((c for c in clientes if c["id"] == id_cliente), None)
+        
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM cliente WHERE id_cliente = %s", (id_cliente,))
+        cliente = cursor.fetchone()
         
         if not cliente:
             print("Cliente não encontrado!")
@@ -88,66 +110,87 @@ def editar_cliente():
         print("\nDeixe em branco para manter o valor atual")
         nome = input(f"Nome ({cliente['nome']}): ").strip() or cliente['nome']
         email_temp = input(f"Email ({cliente['email']}): ").strip() or cliente['email']
-        
-        # Verificar se o novo email já existe em outro cliente
-        if email_temp != cliente['email'] and any(c["email"] == email_temp for c in clientes):
-            print("Este email já está cadastrado para outro cliente!")
-            return
-        
         telefone = input(f"Telefone ({cliente['telefone']}): ").strip() or cliente['telefone']
         endereco = input(f"Endereço ({cliente['endereco']}): ").strip() or cliente['endereco']
         
-        cliente.update({
-            "nome": nome,
-            "email": email_temp,
-            "telefone": telefone,
-            "endereco": endereco
-        })
+        sql = """UPDATE cliente 
+                SET nome = %s, email = %s, telefone = %s, endereco = %s 
+                WHERE id_cliente = %s"""
+        cursor.execute(sql, (nome, email_temp, telefone, endereco, id_cliente))
+        conn.commit()
         
         print("\nCliente atualizado com sucesso!")
     except ValueError:
         print("ID inválido! Digite um número inteiro.")
+    except Error as e:
+        if "Duplicate entry" in str(e):
+            print("Este email já está cadastrado para outro cliente!")
+        else:
+            print(f"Erro ao atualizar cliente: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def excluir_cliente():
     """Exclui um cliente do sistema."""
-    global clientes, contatos
-    
     listar_clientes()
-    if not clientes:
+    
+    conn = get_db_connection()
+    if not conn:
         return
     
     try:
         id_cliente = int(input("\nID do cliente a excluir: "))
-        cliente = next((c for c in clientes if c["id"] == id_cliente), None)
         
-        if not cliente:
+        cursor = conn.cursor(dictionary=True)
+        
+        # Verificar se o cliente existe
+        cursor.execute("SELECT * FROM cliente WHERE id_cliente = %s", (id_cliente,))
+        if not cursor.fetchone():
             print("Cliente não encontrado!")
             return
         
         # Verificar se o cliente possui contatos
-        contatos_cliente = [c for c in contatos if c["id_cliente"] == id_cliente]
-        if contatos_cliente:
-            print(f"\nAtenção: Este cliente possui {len(contatos_cliente)} contato(s).")
+        cursor.execute("SELECT COUNT(*) as total FROM contato WHERE id_cliente = %s", (id_cliente,))
+        total_contatos = cursor.fetchone()['total']
+        
+        if total_contatos > 0:
+            print(f"\nAtenção: Este cliente possui {total_contatos} contato(s).")
             confirmacao = input("Deseja realmente excluir o cliente e seus contatos? (s/N): ").lower()
             if confirmacao != 's':
                 print("Operação cancelada.")
                 return
+            
+            # Excluir contatos primeiro (devido à chave estrangeira)
+            cursor.execute("DELETE FROM contato WHERE id_cliente = %s", (id_cliente,))
         
-        clientes = [c for c in clientes if c["id"] != id_cliente]
-        contatos = [c for c in contatos if c["id_cliente"] != id_cliente]
+        # Excluir o cliente
+        cursor.execute("DELETE FROM cliente WHERE id_cliente = %s", (id_cliente,))
+        conn.commit()
+        
         print("\nCliente e seus contatos foram excluídos com sucesso!")
     except ValueError:
         print("ID inválido! Digite um número inteiro.")
+    except Error as e:
+        print(f"Erro ao excluir cliente: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def cadastrar_contato():
     """Cadastra um novo contato para um cliente."""
     listar_clientes()
-    if not clientes:
+    
+    conn = get_db_connection()
+    if not conn:
         return
     
     try:
         id_cliente = int(input("\nID do cliente para cadastrar contato: "))
-        cliente = next((c for c in clientes if c["id"] == id_cliente), None)
+        
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT nome FROM cliente WHERE id_cliente = %s", (id_cliente,))
+        cliente = cursor.fetchone()
         
         if not cliente:
             print("Cliente não encontrado!")
@@ -167,42 +210,51 @@ def cadastrar_contato():
             print("Tipo inválido! Digite 'pessoal' ou 'comercial'")
             tipo = input("Tipo (pessoal/comercial): ").strip().lower()
         
-        contato = {
-            "id": len(contatos) + 1,
-            "id_cliente": id_cliente,
-            "nome": nome,
-            "telefone": telefone,
-            "email": email,
-            "tipo": tipo
-        }
+        sql = """INSERT INTO contato (id_cliente, nome, telefone, email, tipo) 
+                 VALUES (%s, %s, %s, %s, %s)"""
+        cursor.execute(sql, (id_cliente, nome, telefone, email, tipo))
+        conn.commit()
         
-        contatos.append(contato)
         print("\nContato cadastrado com sucesso!")
     except ValueError:
         print("ID inválido! Digite um número inteiro.")
+    except Error as e:
+        print(f"Erro ao cadastrar contato: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def listar_contatos_cliente():
     """Lista todos os contatos de um cliente específico."""
     listar_clientes()
-    if not clientes:
+    
+    conn = get_db_connection()
+    if not conn:
         return
     
     try:
         id_cliente = int(input("\nID do cliente para listar contatos: "))
-        cliente = next((c for c in clientes if c["id"] == id_cliente), None)
+        
+        cursor = conn.cursor(dictionary=True)
+        
+        # Verificar se o cliente existe
+        cursor.execute("SELECT nome FROM cliente WHERE id_cliente = %s", (id_cliente,))
+        cliente = cursor.fetchone()
         
         if not cliente:
             print("Cliente não encontrado!")
             return
         
-        contatos_cliente = [c for c in contatos if c["id_cliente"] == id_cliente]
+        # Buscar contatos do cliente
+        cursor.execute("SELECT * FROM contato WHERE id_cliente = %s", (id_cliente,))
+        contatos = cursor.fetchall()
         
         print(f"\n=== CONTATOS DE {cliente['nome'].upper()} ===")
-        if not contatos_cliente:
+        if not contatos:
             print("Nenhum contato cadastrado para este cliente.")
         else:
-            for contato in contatos_cliente:
-                print(f"\nID: {contato['id']}")
+            for contato in contatos:
+                print(f"\nID: {contato['id_contato']}")
                 print(f"Nome: {contato['nome']}")
                 print(f"Telefone: {contato['telefone']}")
                 print(f"Email: {contato['email']}")
@@ -210,38 +262,58 @@ def listar_contatos_cliente():
                 print("-" * 30)
     except ValueError:
         print("ID inválido! Digite um número inteiro.")
+    except Error as e:
+        print(f"Erro ao listar contatos: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def buscar_clientes():
     """Busca clientes por nome ou email."""
-    if not clientes:
-        print("\nNenhum cliente cadastrado.")
+    conn = get_db_connection()
+    if not conn:
         return
     
-    termo = input("\nDigite o nome ou email para buscar: ").strip().lower()
-    if not termo:
-        print("Digite um termo de busca válido!")
-        return
-    
-    resultados = [
-        c for c in clientes
-        if termo in c['nome'].lower() or termo in c['email'].lower()
-    ]
-    
-    print("\n=== RESULTADOS DA BUSCA ===")
-    if not resultados:
-        print("Nenhum cliente encontrado.")
-    else:
-        for cliente in resultados:
-            print(f"\nID: {cliente['id']}")
-            print(f"Nome: {cliente['nome']}")
-            print(f"Email: {cliente['email']}")
-            print(f"Telefone: {cliente['telefone']}")
-            print(f"Endereço: {cliente['endereco']}")
-            print("-" * 40)
+    try:
+        termo = input("\nDigite o nome ou email para buscar: ").strip()
+        if not termo:
+            print("Digite um termo de busca válido!")
+            return
+        
+        cursor = conn.cursor(dictionary=True)
+        sql = """SELECT * FROM cliente 
+                 WHERE nome LIKE %s OR email LIKE %s"""
+        termo_busca = f"%{termo}%"
+        cursor.execute(sql, (termo_busca, termo_busca))
+        resultados = cursor.fetchall()
+        
+        print("\n=== RESULTADOS DA BUSCA ===")
+        if not resultados:
+            print("Nenhum cliente encontrado.")
+        else:
+            for cliente in resultados:
+                print(f"\nID: {cliente['id_cliente']}")
+                print(f"Nome: {cliente['nome']}")
+                print(f"Email: {cliente['email']}")
+                print(f"Telefone: {cliente['telefone']}")
+                print(f"Endereço: {cliente['endereco']}")
+                print("-" * 40)
+    except Error as e:
+        print(f"Erro ao buscar clientes: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def main():
     """Função principal que executa o loop do programa."""
     print("Bem-vindo ao Sistema de Cadastro de Clientes e Contatos!")
+    
+    # Testar conexão com o banco de dados
+    conn = get_db_connection()
+    if not conn:
+        print("Não foi possível conectar ao banco de dados. Verifique se o MySQL está rodando.")
+        return
+    conn.close()
     
     while True:
         opcao = menu_principal()
