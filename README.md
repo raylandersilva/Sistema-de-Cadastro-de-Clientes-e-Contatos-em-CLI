@@ -30,6 +30,43 @@ Projeto_Integrador/
 └── README.md                     # Este arquivo
 ```
 
+## Imagens das Funcionalidades
+
+### Interface CLI (Linha de Comando)
+![Interface CLI](CadastroClienteCLI.png)  
+*Interface do sistema em linha de comando.*
+
+![Cadastro de Clientes CLI](cadastroClienteCLI.png)  
+*Cadastro de clientes na versão CLI.*
+
+![Listagem de Clientes CLI](ListagemClientCLI.png)  
+*Listagem de clientes na versão CLI.*
+
+![Edição de Clientes CLI](editarClienteCLI.png)  
+*Edição de clientes na versão CLI.*
+
+![Exclusão de Clientes CLI](ExcluirClienteCLI.png)  
+*Exclusão de clientes na versão CLI.*
+
+### Interface GUI (Interface Gráfica)
+![Interface GUI](interfaceGUI.png)  
+*Interface gráfica do sistema.*
+
+![Cadastro de Clientes GUI](cadastroCliente.png)  
+*Cadastro de clientes na versão GUI.*
+
+![Listagem de Clientes GUI](ListagemClient.png)  
+*Listagem de clientes na versão GUI.*
+
+![Edição de Clientes GUI](EditarCliente.png)  
+*Edição de clientes na versão GUI.*
+
+![Exclusão de Clientes GUI](ExcluirCliente.png)  
+*Exclusão de clientes na versão GUI.*
+
+![Confirmação de Exclusão GUI](ExcluirClientConfirmation.png)  
+*Confirmação de exclusão de clientes na versão GUI.* 
+
 ## Como Executar
 
 ### Pré-requisitos
@@ -132,4 +169,4 @@ Assista ao vídeo demonstrando as principais funcionalidades do sistema:
 ## Autoria
 
 Este projeto foi desenvolvido por **Raylander**.  
-Para mais informações, entre em contato: [raylander56@hotmail.com](mailto:raylander56@hotmail.com). 
+Para mais informações, entre em contato: [raylander56@hotmail.com](mailto:raylander56@hotmail.com).

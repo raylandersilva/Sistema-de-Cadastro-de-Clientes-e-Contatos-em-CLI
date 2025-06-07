@@ -8,9 +8,41 @@ REQUISITOS FUNCIONAIS:
 5. Cadastrar múltiplos contatos para cada cliente
 6. Listar contatos de um cliente específico
 7. Buscar clientes por nome ou email
+8. Interface Gráfica (GUI)
+   - Fornecer uma interface gráfica para gerenciar clientes e contatos.
+   - Incluir abas para clientes e contatos.
+   - Utilizar formulários para adicionar/editar registros.
+   - Exibir dados em tabelas (Treeview).
 
 REQUISITOS NÃO FUNCIONAIS:
 1. Sistema desenvolvido em Python
 2. Armazenamento inicial em listas/dicionários (será migrado para banco de dados na próxima etapa)
 3. Interface via linha de comando (CLI)
-4. Código organizado em funções 
+4. Código organizado em funções
+5. Tecnologias
+   - Linguagem de programação: Python.
+   - Banco de dados: MySQL.
+   - Interface gráfica: Tkinter.
+   - Biblioteca para conexão com MySQL: mysql-connector-python.
+6. Armazenamento de Dados
+   - Utilizar banco de dados MySQL para persistência dos dados.
+   - Configurar o banco de dados localmente (XAMPP) ou em um servidor remoto.
+7. Validação e Tratamento de Erros
+   - Validar dados de entrada em todas as operações.
+   - Tratar erros de conexão com o banco de dados.
+   - Exibir mensagens de erro claras para o usuário.
+8. Usabilidade
+   - Interface gráfica intuitiva e fácil de usar.
+   - Menu de opções claro e organizado na versão CLI.
+9. Desempenho
+   - Garantir que as operações CRUD sejam executadas de forma eficiente.
+   - Otimizar consultas ao banco de dados.
+10. Segurança
+    - Proteger as credenciais de conexão com o banco de dados (ex: usar arquivo de configuração separado).
+    - Evitar injeção de SQL utilizando consultas parametrizadas.
+
+PRÓXIMAS ETAPAS:
+1. Implementar relatórios e exportação de dados.
+2. Adicionar autenticação de usuários.
+3. Melhorar a interface gráfica com temas e personalizações.
+4. Adicionar funcionalidades de backup e restauração do banco de dados. 
